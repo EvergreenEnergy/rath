@@ -148,3 +148,6 @@ data
 *.temp
 venv
 *.fakts.yaml
+
+# IDEs
+.idea
