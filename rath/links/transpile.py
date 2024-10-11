@@ -7,7 +7,7 @@ from graphql import (
     OperationDefinitionNode,
     TypeNode,
 )
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from rath.links.parsing import ParsingLink
 from rath.operation import Operation
 
@@ -22,15 +22,12 @@ class TranspileHandler(BaseModel):
     type passed to it.
     """
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     graphql_type: str
     name: str
     predicate: Callable[[Any], bool] = Field(exclude=True)
     parser: Callable[[Any], Any] = Field(exclude=True)
-
-    class Config:
-        """pydantic config"""
-
-        arbitrary_types_allowed = True
 
 
 class ListTranspileHandler(BaseModel):
@@ -39,15 +36,12 @@ class ListTranspileHandler(BaseModel):
     Similar to a TranspileHandler, but takes act on GraphqQLList Type of that type
     """
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     graphql_type: str
     name: str
     predicate: Callable[[Any, int], bool] = Field(exclude=True)
     parser: Callable[[Any, int], Any] = Field(exclude=True)
-
-    class Config:
-        """pydantic config"""
-
-        arbitrary_types_allowed = True
 
 
 class TranspilationError(Exception):

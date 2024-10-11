@@ -1,5 +1,7 @@
 from typing import AsyncIterator, Optional
 
+from pydantic import ConfigDict
+
 from rath.links.base import ContinuationLink
 from rath.operation import (
     GraphQLException,
@@ -18,6 +20,8 @@ class RetryLink(ContinuationLink):
     """RetriyLink is a link that retries a operation  fails.
     This link is stateful, and will keep track of the number of times the
     subscription has been retried."""
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     maximum_retry_attempts = 3
     """The maximum number of times the operation function will be called, before the operation fails."""
@@ -62,9 +66,3 @@ class RetryLink(ContinuationLink):
             logger.info(f"Subscription {operation} disconnected. Retrying {retry}")
             async for result in self.aexecute(operation, retry=retry + 1):
                 yield result
-
-    class Config:
-        """pydantic config for the link"""
-
-        underscore_attrs_are_private = True
-        arbitary_types_allowed = True

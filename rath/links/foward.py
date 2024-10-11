@@ -1,5 +1,7 @@
 from typing import AsyncIterator
 
+from pydantic import ConfigDict
+
 from rath.links.base import ContinuationLink
 from rath.operation import GraphQLResult, Operation
 from rath.errors import NotComposedError
@@ -12,6 +14,8 @@ class ForwardLink(ContinuationLink):
     This link is useful for conditional fallbacks for other
     links.
     """
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     async def aexecute(self, operation: Operation) -> AsyncIterator[GraphQLResult]:
         """Executes an operation against the link
@@ -34,9 +38,3 @@ class ForwardLink(ContinuationLink):
 
         async for result in self.next.aexecute(operation):
             yield result
-
-    class Config:
-        """pydantic config for the link"""
-
-        underscore_attrs_are_private = True
-        arbitary_types_allowed = True

@@ -1,7 +1,7 @@
 import asyncio
 from typing import AsyncIterator, Awaitable, Callable, Dict, Optional, Type, Any
 
-from pydantic import Field, validator
+from pydantic import Field, validator, ConfigDict
 from rath.links.base import AsyncTerminatingLink
 from rath.links.testing.mock import AsyncMockResolver
 from rath.operation import GraphQLResult, Operation
@@ -38,6 +38,8 @@ class AsyncStatefulMockLink(AsyncTerminatingLink):
     and has internal state that needs to be handled.
 
     """
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     timeout: float = 2
 
@@ -245,9 +247,3 @@ class AsyncStatefulMockLink(AsyncTerminatingLink):
 
         else:
             raise NotImplementedError("Only subscription are mocked")
-
-    class Config:
-        """Pydantic Config"""
-
-        arbitrary_types_allowed = True
-        underscore_attrs_are_private = True

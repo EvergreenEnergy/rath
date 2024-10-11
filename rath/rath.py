@@ -206,8 +206,3 @@ class Rath(KoiledModel):
         self._entered = False
         if self._context_token:
             current_rath.set(None)
-
-    class Config:
-        """Configures the Rath model"""
-
-        underscore_attrs_are_private = True

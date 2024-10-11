@@ -1,7 +1,7 @@
 from .auth import AuthTokenLink
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.backends import default_backend
-from pydantic import validator
+from pydantic import field_validator, Field
 from cryptography.hazmat.primitives.asymmetric import rsa
 from typing import Any, Callable, Awaitable, Dict, Type
 import jwt
@@ -17,9 +17,10 @@ class SignLocalLink(AuthTokenLink):
 
     """
 
-    private_key: rsa.RSAPrivateKey
+    private_key: rsa.RSAPrivateKey = Field(validate_default=True)
 
-    @validator("private_key", pre=True, always=True)
+    @field_validator("private_key", mode="before")
+    @classmethod
     def must_be_valid_pem_key(cls: Type["SignLocalLink"], v: Any) -> rsa.RSAPrivateKey:
         """Validates that the private key is a valid PEM key"""
         try:

@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Type, AsyncIterator
 from rath.links.types import Payload
 import aiohttp
 from graphql import OperationType
-from pydantic import Field
+from pydantic import Field, ConfigDict
 from rath.operation import GraphQLException, GraphQLResult, Operation
 from rath.links.base import AsyncTerminatingLink
 from rath.links.errors import AuthenticationError
@@ -36,6 +36,8 @@ class AIOHttpLink(AsyncTerminatingLink):
     that is configured to use the certifi CA bundle by default. You can override this
     behavior by passing your own SSLContext to the constructor.
     """
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     endpoint_url: str
     """endpoint_url is the URL to send operations to."""
@@ -162,9 +164,3 @@ class AIOHttpLink(AsyncTerminatingLink):
                     raise Exception(f"Response does not contain data {json_response}")
 
                 yield GraphQLResult(data=json_response["data"])
-
-    class Config:
-        """pydantic config"""
-
-        arbitrary_types_allowed = True
-        underscore_attrs_are_private = True

@@ -1,5 +1,7 @@
 from typing import AsyncIterator, Awaitable, Callable
 
+from pydantic import ConfigDict
+
 from rath.links.base import ContinuationLink
 from rath.operation import GraphQLResult, Operation
 from rath.errors import NotComposedError
@@ -15,6 +17,8 @@ class LogLink(ContinuationLink):
     link that logs the operation to the console.
     links.
     """
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     log: Callable[[Operation], Awaitable[None]] = just_print
 
@@ -42,9 +46,3 @@ class LogLink(ContinuationLink):
         await self.log(operation)
         async for result in self.next.aexecute(operation, **kwargs):
             yield result
-
-    class Config:
-        """pydantic config for the link"""
-
-        underscore_attrs_are_private = True
-        arbitary_types_allowed = True

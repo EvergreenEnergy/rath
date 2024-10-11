@@ -3,7 +3,7 @@ import json
 from typing import Any, Dict, List, Type, AsyncIterator
 import httpx
 from graphql import OperationType
-from pydantic import Field
+from pydantic import Field, ConfigDict
 from rath.operation import GraphQLException, GraphQLResult, Operation
 from rath.links.base import AsyncTerminatingLink
 from rath.links.errors import AuthenticationError
@@ -27,6 +27,8 @@ class DateTimeEncoder(json.JSONEncoder):
 
 class HttpxLink(AsyncTerminatingLink):
     """HttpxLink is a terminating link that sends operations over HTTP using httpx"""
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     endpoint_url: str
     """endpoint_url is the URL to send operations to."""
@@ -109,9 +111,3 @@ class HttpxLink(AsyncTerminatingLink):
                     raise Exception(f"Response does not contain data {json_response}")
 
                 yield GraphQLResult(data=json_response["data"])
-
-    class Config:
-        """the config for the link"""
-
-        arbitrary_types_allowed = True
-        underscore_attrs_are_private = True

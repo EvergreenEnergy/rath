@@ -8,7 +8,7 @@ from graphql import (
     IntrospectionQuery,
 )
 from graphql.language.parser import parse
-from pydantic import root_validator
+from pydantic import root_validator, ConfigDict
 from rath.links.base import ContinuationLink
 from rath.links.errors import ContinuationLinkError
 from rath.operation import GraphQLResult, Operation, opify
@@ -64,6 +64,8 @@ class ValidatingLink(ContinuationLink):
 
 
     """
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     schema_dsl: Optional[str] = None
     """ The schema (as a string) to validate against. If not provided, the link will introspect the server to get the schema if allow_introspection is set to True."""
@@ -148,8 +150,3 @@ class ValidatingLink(ContinuationLink):
 
         async for result in self.next.aexecute(operation):
             yield result
-
-    class Config:
-        """Config for pydantic"""
-
-        arbitrary_types_allowed = True

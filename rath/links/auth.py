@@ -1,5 +1,7 @@
 from typing import AsyncIterator, Awaitable, Callable, Optional
 
+from pydantic import ConfigDict
+
 from rath.links.base import ContinuationLink
 from rath.operation import GraphQLResult, Operation
 from rath.links.errors import AuthenticationError
@@ -15,6 +17,8 @@ class AuthTokenLink(ContinuationLink):
     This link is statelss, and does not store the token. It is up to the user to
     store the token and pass it to the token_loader function.
     """
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     maximum_refresh_attempts: int = 3
     """The maximum number of times the token_refresher function will be called, before the operation fails."""
@@ -99,12 +103,6 @@ class AuthTokenLink(ContinuationLink):
 
             async for result in self.aexecute(operation, retry=retry + 1):
                 yield result
-
-    class Config:
-        """pydantic configuration for the AuthTokenLink"""
-
-        underscore_attrs_are_private = True
-        arbitary_types_allowed = True
 
 
 class ComposedAuthLink(AuthTokenLink):

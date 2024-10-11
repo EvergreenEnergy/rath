@@ -1,7 +1,7 @@
 from ssl import SSLContext
 from typing import AsyncIterator, Dict, Optional, Any
 from graphql import OperationType
-from pydantic import Field
+from pydantic import Field, ConfigDict
 import websockets
 import json
 import asyncio
@@ -73,6 +73,8 @@ class SubscriptionTransportWsLink(AsyncTerminatingLink):
     This is a stateful link, keeing a connection open and sending messages over it.
 
     """
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     ws_endpoint_url: str
     """ The endpoint url to connect to """
@@ -475,9 +477,3 @@ class SubscriptionTransportWsLink(AsyncTerminatingLink):
             logger.debug(f"Subcription ended {operation}")
             await self.aforward(json.dumps({"id": id, "type": GQL_STOP}))
             raise e
-
-    class Config:
-        """The config for the link"""
-
-        arbitrary_types_allowed = True
-        underscore_attrs_are_private = True
